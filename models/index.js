@@ -63,11 +63,11 @@ var user = UserModel.build({
 user.save().then(err => err ? 'Error in inserting' : 'User inserted');
 
 // to read >> GET
-findUsername = (data) => {
+findUsername = (user) => {
     UserModel
         .find({
             where: {
-                username: data.userToFind
+                username: user.userToFind
             }
         })
         .then((data) => {
@@ -81,11 +81,11 @@ findUsername = (data) => {
         })
         .catch(err => console.log(err));
 };
-findUsername({userToFind: "person334"});
+// let user2=findUsername({userToFind: "person334"});
+// console.log("findUsername OK..." + user2.username);
 
 // to update >> PUT
 updateUsername = (user) => {
-
     UserModel
         .find({where: {username: user.userToUpdate}})
         .then(data => {
@@ -109,9 +109,35 @@ updateUsername = (user) => {
         })
         .catch(err => console.trace(err));
 };
-updateUsername({userToUpdate: "person334"});
+// updateUsername({userToUpdate: "person7"});
 
 // to delete >> DELETE
+deleteUser = (user) => {
+
+    UserModel
+        .find({where: {username: user.usernameToDelete}})
+        .then(data => {
+            if (!data) {
+                console.log('User cannot be found!')
+            }
+            else {
+                console.log('User found: ');
+                console.log(`Username: ${data.username} & Pass: ${data.password}`);
+                deletedName = data.username;
+                deletedPass = data.password;
+                data
+                    .destroy()
+                    .then((datadelete) => {
+                        datadelete ?
+                            console.log(`User's deleted successfully: ${datadelete.username} & ${datadelete.password}`) :
+                            console.log('User cannot be deleted!')
+                    })
+                    .catch(err => console.log(err))
+            }
+        })
+        .catch(err => console.trace(err));
+};
+// deleteUser({usernameToDelete: "person51"});
 
 // export connection
 module.exports.sequelize = sequelize;
