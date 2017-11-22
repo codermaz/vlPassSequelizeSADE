@@ -43,85 +43,73 @@ var UserModel = sequelize.import('userModel');
 // Account.belongsToMany(FamilyUser, {through: FamilyUserAccount});
 
 sequelize.sync()
-    .then((err) => {
-        if (err) {
-            console.log('An error occured while creating table ');
-        } else {
-            console.log('Tables created successfully');
-        }
-    });
+    .then(() => {
+        console.log('Tables created successfully.');
+    })
+    .catch(err => console.log(err));
 
-
-function randomIntInc (low, high) {
+function randomIntInc(low, high) {
     return Math.floor(Math.random() * (high - low + 1) + low);
 }
 
-var randPerson = "person"+randomIntInc(1,1000);
+var randPerson = "person" + randomIntInc(1, 1000);
 
 var user = UserModel.build({
     username: randPerson,
-    password: randomIntInc(1,1000) + randPerson
+    password: randomIntInc(1, 1000) + randPerson
 });
 
 // to save >> POST
 user.save().then(err => err ? 'Error in inserting' : 'User inserted');
 
 // to read >> GET
-findUsername= (data, success, fail) => {
+findUsername = (data) => {
     UserModel
         .find({
             where: {
                 username: data.userToFind
             }
         })
-        .then((data, err) => {
-            if (err) {
-                console.log(err);
-            }
-            if (!data) {
-                console.log('User cannot found!')
+        .then((data) => {
+            if (data) {
+                console.log(`User found: \n\t Username: ${data.username} & Pass: ${data.password}`);
+                return data;
             }
             else {
-                console.log('User found: ');
-                console.log(`Username: ${data.username} & Pass: ${data.password}`);
+                console.log('User cannot found!')
             }
-        });
+        })
+        .catch(err => console.log(err));
 };
 findUsername({userToFind: "person334"});
 
 // to update >> PUT
-updateUsername = (data, success, fail) =>
-{
+updateUsername = (user) => {
+
     UserModel
-        .find({where: {username: data.userToUpdate}})
+        .find({where: {username: user.userToUpdate}})
         .then(data => {
-            // if (!data) {
-            //     console.log('User cannot found!')
-            // }
-            if (data) {
+            if (!data) {
+                console.log('User cannot be found!')
+            }
+            else {
                 console.log('User found: ');
                 console.log(`Username: ${data.username} & Pass: ${data.password}`);
                 data
                     .updateAttributes({
-                        password: 'updated'
+                        password: 'updated112'
                     })
-                    .then ((dataupdate, err) => {
-                        if (err) {
-                            console.log(err);
-                        }
-                        if (!dataupdate) {
+                    .then((dataupdate) => {
+                        dataupdate ?
+                            console.log(`User's password updated successfully: ${dataupdate.username} & ${dataupdate.password}`) :
                             console.log('User cannot be updated!')
-                        } else {
-                            console.log('User updated successfully.')
-                        }
-
                     })
-                    // .success(dataupdate => { console.log("Success on update: ", dataupdate) })
+                    .catch(err => console.log(err))
             }
-        }).catch(err => console.trace(err));
+        })
+        .catch(err => console.trace(err));
 };
-
- updateUsername({userToUpdate:"person334"});
+updateUsername({userToUpdate: "person334"});
 
 // to delete >> DELETE
 
