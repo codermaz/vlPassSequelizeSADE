@@ -60,7 +60,16 @@ var user = UserModel.build({
 });
 
 // to save >> POST
-user.save().then(err => err ? 'Error in inserting' : 'User inserted');
+user
+    .save()
+    .then( data => {
+        if (data) {
+            console.log(`User inserted:  \n\t Username: ${data.username} & Pass: ${data.password}`);
+        } else {
+            console.log('Error in inserting');
+        }
+    })
+    .catch(err => console.log(err));
 
 // to read >> GET
 findUsername = (user) => {
@@ -123,8 +132,6 @@ deleteUser = (user) => {
             else {
                 console.log('User found: ');
                 console.log(`Username: ${data.username} & Pass: ${data.password}`);
-                deletedName = data.username;
-                deletedPass = data.password;
                 data
                     .destroy()
                     .then((datadelete) => {
